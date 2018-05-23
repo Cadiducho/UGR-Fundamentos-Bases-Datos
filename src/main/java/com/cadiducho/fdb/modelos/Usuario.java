@@ -1,5 +1,9 @@
 package com.cadiducho.fdb.modelos;
 
+import com.cadiducho.fdb.Fundamentos;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 /**
  * Clase de Usuario
  */
@@ -29,6 +33,17 @@ public class Usuario {
     @Override
     public String toString() {
         return "Usuario{" + "dni=" + dni + ", nombre=" + nombre + '}';
+    }
+
+    public void register() {
+        try {
+            PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Usuarios` (`dni`, `nombre`) VALUES (?, ?);");
+            ps.setString(1, dni);
+            ps.setString(2, nombre);
+            ps.executeUpdate();
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
 }

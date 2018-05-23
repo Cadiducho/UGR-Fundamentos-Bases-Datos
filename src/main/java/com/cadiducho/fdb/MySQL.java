@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -58,44 +59,43 @@ public class MySQL {
     
     public void createTables() {
         String createAutores = "CREATE TABLE IF NOT EXISTS `Autores` (\n" +
-        "	`id` CHAR(36) NOT NULL,\n" +
-        "	`nombre` VARCHAR(50) NOT NULL,\n" +
-        "	PRIMARY KEY (`id`)\n" +
-        ");";
+        "  `id` char(36) NOT NULL,\n" +
+        "  `nombre` varchar(50) NOT NULL,\n" +
+        "  PRIMARY KEY (`id`)\n" +
+        ")";
         String createTemas = "CREATE TABLE IF NOT EXISTS `Temas` (\n" +
-        "	`id` CHAR(36) NOT NULL,\n" +
-        "	`nombre` VARCHAR(36) NOT NULL,\n" +
-        "	PRIMARY KEY (`id`),\n" +
-        "	UNIQUE INDEX `nombre` (`nombre`)\n" +
-        ");";
+        "  `id` char(36) NOT NULL,\n" +
+        "  `nombre` varchar(36) NOT NULL,\n" +
+        "  PRIMARY KEY (`id`),\n" +
+        "  UNIQUE KEY `nombre` (`nombre`)\n" +
+        ")";
         String createUsuarios = "CREATE TABLE IF NOT EXISTS `Usuarios` (\n" +
-        "	`dni` CHAR(9) NOT NULL,\n" +
-        "	`nombre` VARCHAR(50) NOT NULL,\n" +
-        "	PRIMARY KEY (`dni`)\n" +
-        ");";
+        "  `dni` char(9) NOT NULL,\n" +
+        "  `nombre` varchar(50) NOT NULL,\n" +
+        "  PRIMARY KEY (`dni`)\n" +
+        ")";
         String createLibros = "CREATE TABLE IF NOT EXISTS `Libros` (\n" +
-        "	`id` CHAR(36) NOT NULL,\n" +
-        "	`Titulo` VARCHAR(50) NOT NULL,\n" +
-        "	`Tema` CHAR(36) NOT NULL,\n" +
-        "	`Autor` CHAR(36) NOT NULL,\n" +
-        "	PRIMARY KEY (`id`),\n" +
-        "	UNIQUE INDEX `Titulo_Autor` (`Titulo`, `Autor`),\n" +
-        "	INDEX `FK_Libros_Autores` (`Autor`),\n" +
-        "	INDEX `FK_Libros_Temas` (`Tema`),\n" +
-        "	CONSTRAINT `FK_Libros_Autores` FOREIGN KEY (`Autor`) REFERENCES `Autores` (`id`),\n" +
-        "	CONSTRAINT `FK_Libros_Temas` FOREIGN KEY (`Tema`) REFERENCES `Temas` (`id`)\n" +
+        "  `id` char(36) NOT NULL,\n" +
+        "  `Titulo` varchar(50) NOT NULL,\n" +
+        "  `Tema` char(36) NOT NULL,\n" +
+        "  `Autor` char(36) NOT NULL,\n" +
+        "  PRIMARY KEY (`id`),\n" +
+        "  UNIQUE KEY `Titulo_Autor` (`Titulo`,`Autor`),\n" +
+        "  KEY `FK_Libros_Autores` (`Autor`),\n" +
+        "  KEY `FK_Libros_Temas` (`Tema`),\n" +
+        "  CONSTRAINT `FK_Libros_Autores` FOREIGN KEY (`Autor`) REFERENCES `Autores` (`id`),\n" +
+        "  CONSTRAINT `FK_Libros_Temas` FOREIGN KEY (`Tema`) REFERENCES `Temas` (`id`)\n" +
         ");";
-        String createLibrosPrestados = "CREATE TABLE `LibrosPrestados` (\n" +
-        "	`dni` CHAR(9) NOT NULL,\n" +
-        "	`libro` CHAR(36) NOT NULL,\n" +
-        "	`devuelto` TINYINT(1) NOT NULL,\n" +
-        "	`fechaPrestado` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
-        "	`fechaDevuelto` TIMESTAMP NULL DEFAULT NULL,\n" +
-        "	PRIMARY KEY (`dni`, `libro`, `fechaPrestado`),\n" +
-        "	INDEX `FK_LibrosPrestados_Libros` (`libro`),\n" +
-        "	CONSTRAINT `FK_LibrosPrestados_Libros` FOREIGN KEY (`libro`) REFERENCES `Libros` (`id`),\n" +
-        "	CONSTRAINT `FK_LibrosPrestados_Usuarios` FOREIGN KEY (`dni`) REFERENCES `Usuarios` (`dni`)\n" +
-        ");";
+        String createLibrosPrestados = "CREATE TABLE IF NOT EXISTS `LibrosPrestados` (\n" +
+        "  `dni` char(9) NOT NULL,\n" +
+        "  `libro` char(36) NOT NULL,\n" +
+        "  `fechaPrestado` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+        "  `fechaDevuelto` timestamp NULL DEFAULT NULL,\n" +
+        "  PRIMARY KEY (`dni`,`libro`,`fechaPrestado`),\n" +
+        "  KEY `FK_LibrosPrestados_Libros` (`libro`),\n" +
+        "  CONSTRAINT `FK_LibrosPrestados_Libros` FOREIGN KEY (`libro`) REFERENCES `Libros` (`id`),\n" +
+        "  CONSTRAINT `FK_LibrosPrestados_Usuarios` FOREIGN KEY (`dni`) REFERENCES `Usuarios` (`dni`)\n" +
+        ")";
         
         try {
             PreparedStatement stmAutores = openConnection().prepareStatement(createAutores);
@@ -114,6 +114,33 @@ public class MySQL {
             stmPrestados.executeUpdate();
             
             System.out.println("Tablas creadas correctamente");
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+    
+    public void insertarDatosPrueba() {
+        try {
+            PreparedStatement stmInsertar = openConnection().prepareStatement(""
+                    + "INSERT INTO `Temas` (`id`, `nombre`) VALUES "
+                    + "	('5a8256b5-5952-471e-9464-4c78b1c09acc', 'Fantasía');");
+            stmInsertar.addBatch();
+            stmInsertar.addBatch("INSERT INTO `Usuarios` (`dni`, `nombre`) VALUES "
+                    + "	('32426456G', 'Ana'),"
+                    + "	('88da8433P', 'Dani');");
+            stmInsertar.addBatch("INSERT INTO `Autores` (`id`, `nombre`) VALUES"
+                    + "	('4b8abfb4-ed25-4dbd-8fd5-8bb04511a814', 'Laura Gallego'),"
+                    + "	('60de96dd-ac7b-47f3-a99c-3e4481c33e22', 'J. K Rowling');");
+            stmInsertar.addBatch("INSERT INTO `Libros` (`id`, `Titulo`, `Tema`, `Autor`) VALUES"
+                    + "	('0e4f7729-b28c-41fd-8001-4189c18cc132', 'Harry Potter y la piedra filosofal', '5a8256b5-5952-471e-9464-4c78b1c09acc', '60de96dd-ac7b-47f3-a99c-3e4481c33e22'),"
+                    + "	('c6492bbf-8ae6-4453-8e6c-6d0ef4edab5b', 'Harry Potter y el prisionero de Azkaban', '5a8256b5-5952-471e-9464-4c78b1c09acc', '60de96dd-ac7b-47f3-a99c-3e4481c33e22'),"
+                    + "	('dc797a0d-b225-484e-b669-7a467e38efad', 'Memorias de Idhún', '5a8256b5-5952-471e-9464-4c78b1c09acc', '4b8abfb4-ed25-4dbd-8fd5-8bb04511a814'),"
+                    + "	('eedd0b1d-4e4a-45dc-bc47-49a2a8481673', 'Harry Potter y la cámara secreta', '5a8256b5-5952-471e-9464-4c78b1c09acc', '60de96dd-ac7b-47f3-a99c-3e4481c33e22');");
+            stmInsertar.addBatch("INSERT INTO `LibrosPrestados` (`dni`, `libro`, `fechaPrestado`, `fechaDevuelto`) VALUES"
+                    + "	('32426456G', 'dc797a0d-b225-484e-b669-7a467e38efad', '2018-05-22 18:46:09', NULL),"
+                    + "	('88da8433-', 'c6492bbf-8ae6-4453-8e6c-6d0ef4edab5b', '2018-05-22 17:06:33', NULL),"
+                    + "	('88da8433-', 'eedd0b1d-4e4a-45dc-bc47-49a2a8481673', '2018-05-22 16:27:18', '2018-05-22 17:06:36');");
+            stmInsertar.executeBatch();
         } catch (SQLException | ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
@@ -153,18 +180,19 @@ public class MySQL {
             }
             
             //Cargar libros prestados (y su historial)
-            PreparedStatement stmLibrosPrestados = openConnection().prepareStatement("SELECT lp.dni, lp.devuelto, lp.fechaPrestado, lp.fechaDevuelto, l.id, l.Titulo, l.Tema, l.Autor FROM LibrosPrestados lp, Libros l WHERE lp.libro=l.id;");
+            String prestadosQuery = "SELECT lp.dni, lp.fechaPrestado, lp.fechaDevuelto, l.id, l.Titulo, l.Tema, l.Autor "
+                    + "FROM LibrosPrestados lp, Libros l WHERE lp.libro=l.id;";
+            PreparedStatement stmLibrosPrestados = openConnection().prepareStatement(prestadosQuery);
             ResultSet rsLibrosPrestados = stmLibrosPrestados.executeQuery();
             while (rsLibrosPrestados.next()) {
                 UUID id = UUID.fromString(rsLibrosPrestados.getString("id"));
                 String titulo = rsLibrosPrestados.getString("titulo");
-                boolean devuelto = rsLibrosPrestados.getBoolean("devuelto");
                 Date fechaPrestado = rsLibrosPrestados.getDate("fechaPrestado");
                 Date fechaDevuelto = rsLibrosPrestados.getDate("fechaDevuelto");
                 String dniUsuario = rsLibrosPrestados.getString("dni");
                 UUID idTema = UUID.fromString(rsLibrosPrestados.getString("tema"));
                 UUID idAutor = UUID.fromString(rsLibrosPrestados.getString("autor"));
-                LibroPrestado libroPrestado = new LibroPrestado(id, fundamentos.usuarioFromDni(dniUsuario), fundamentos.autorFromId(idAutor), fundamentos.temaFromId(idTema), titulo, devuelto, fechaPrestado, fechaDevuelto);
+                LibroPrestado libroPrestado = new LibroPrestado(id, fundamentos.usuarioFromDni(dniUsuario), fundamentos.autorFromId(idAutor), fundamentos.temaFromId(idTema), titulo, fechaPrestado, fechaDevuelto);
                 libros.add(libroPrestado);
             }
             
@@ -181,6 +209,40 @@ public class MySQL {
             //Cargar el resto de libros
             
             
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+    
+    public void mostrarHistorial() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    
+            PreparedStatement stmMostrarNoDevueltos = openConnection().prepareStatement("SELECT lp.fechaPrestado, l.Titulo, (SELECT t.nombre FROM Temas t WHERE t.id = l.Tema) Tema, (SELECT aut.nombre FROM Autores aut WHERE aut.id = l.Autor) Autor, (SELECT u.nombre FROM Usuarios u WHERE lp.dni=u.dni) Usuario FROM LibrosPrestados lp, Libros l WHERE lp.libro=l.id AND lp.fechaDevuelto IS NULL;");
+            ResultSet rsNoDevueltos = stmMostrarNoDevueltos.executeQuery();
+            System.out.println("=== Libros NO devueltos ===");
+            while (rsNoDevueltos.next()) {
+                String titulo = rsNoDevueltos.getString("titulo");
+                String autor = rsNoDevueltos.getString("autor");
+                String tema = rsNoDevueltos.getString("tema");
+                String usuario = rsNoDevueltos.getString("usuario");
+                Date fecha = new Date(rsNoDevueltos.getTimestamp("fechaPrestado").getTime());
+                System.out.println("Titulo: " + titulo+ "(" + tema + "), por " + autor + ". Prestado a " + usuario + " el " + sdf.format(fecha));
+            }
+            System.out.println("******");
+            PreparedStatement stmMostrarDevueltos = openConnection().prepareStatement("SELECT lp.fechaPrestado, lp.fechaDevuelto, l.Titulo, (SELECT t.nombre FROM Temas t WHERE t.id = l.Tema) Tema, (SELECT aut.nombre FROM Autores aut WHERE aut.id = l.Autor) Autor, (SELECT u.nombre FROM Usuarios u WHERE lp.dni=u.dni) Usuario FROM LibrosPrestados lp, Libros l WHERE lp.libro=l.id AND lp.fechaDevuelto IS NOT NULL;");
+            ResultSet rsDevueltos = stmMostrarDevueltos.executeQuery();
+            System.out.println("=== Libros SÍ devueltos ===");
+            while (rsDevueltos.next()) {
+                String titulo = rsDevueltos.getString("titulo");
+                String autor = rsDevueltos.getString("autor");
+                String tema = rsDevueltos.getString("tema");
+                String usuario = rsDevueltos.getString("usuario");
+                Date fecha = new Date(rsDevueltos.getTimestamp("fechaPrestado").getTime());
+                Date fechaDevuelto = new Date(rsDevueltos.getTimestamp("fechaDevuelto").getTime());
+                System.out.println("Titulo: " + titulo+ "(" + tema + "), por " + autor + ". Prestado a " + usuario + " el " + sdf.format(fecha) + " y devuelto el " + sdf.format(fechaDevuelto));
+            }
+            System.out.println("******");
         } catch (SQLException | ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
         }

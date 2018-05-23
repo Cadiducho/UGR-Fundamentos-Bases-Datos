@@ -1,5 +1,8 @@
 package com.cadiducho.fdb.modelos;
 
+import com.cadiducho.fdb.Fundamentos;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -40,7 +43,15 @@ public class Tema {
     public String toString() {
         return "Tema{" + "id=" + id + ", nombre=" + nombre + '}';
     }
-    
-    
-    
+
+    public void register() {
+        try {
+            PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Temas` (`id`, `nombre`) VALUES (?, ?);");
+            ps.setString(1, id.toString());
+            ps.setString(2, nombre);
+            ps.executeUpdate();
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 }
