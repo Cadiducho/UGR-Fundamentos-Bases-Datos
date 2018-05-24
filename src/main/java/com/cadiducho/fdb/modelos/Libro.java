@@ -3,6 +3,7 @@ package com.cadiducho.fdb.modelos;
 import com.cadiducho.fdb.Fundamentos;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -42,6 +43,10 @@ public class Libro {
     public String getTitulo() {
         return titulo;
     }
+    
+    public LibroPrestado prestar(Usuario usuario) {
+        return new LibroPrestado(this.id, usuario, this.autor, this.tema, this.titulo, new Date());
+    }
 
     @Override
     public String toString() {
@@ -50,7 +55,7 @@ public class Libro {
 
     public void register() {
         try {
-            PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("NSERT INTO `Libros` (`id`, `Titulo`, `Tema`, `Autor`) VALUES (?, ?, ?, ?);");
+            PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Libros` (`id`, `Titulo`, `Tema`, `Autor`) VALUES (?, ?, ?, ?);");
             ps.setString(1, id.toString());
             ps.setString(2, titulo);
             ps.setString(3, tema.getId().toString());

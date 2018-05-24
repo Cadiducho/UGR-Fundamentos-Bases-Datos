@@ -2,6 +2,7 @@ package com.cadiducho.fdb;
 
 import com.cadiducho.fdb.modelos.Autor;
 import com.cadiducho.fdb.modelos.Libro;
+import com.cadiducho.fdb.modelos.LibroPrestado;
 import com.cadiducho.fdb.modelos.Tema;
 import com.cadiducho.fdb.modelos.Usuario;
 import java.sql.Connection;
@@ -167,7 +168,7 @@ public class Fundamentos {
     }
 
     private void insertarLibro() {
-        System.out.println("Inserta nombre: ");
+        System.out.println("Inserta titulo: ");
         String nombre = in.nextLine();
         System.out.println("Selecciona un tema: ");
         Tema tema = interfaz.elegirTema();
@@ -181,9 +182,17 @@ public class Fundamentos {
 
     private void prestarLibro() {
         Libro libro = interfaz.elegirLibroNoPrestado();
+        Usuario usuaro = interfaz.elegirUsuario();
+        libros.remove(libro);
+        LibroPrestado prestado = libro.prestar(usuaro);
+        libros.add(prestado);
+        prestado.procesarPrestamo();
+        System.out.println(prestado.getTitulo() + " prestado!");
     }
 
     private void devolverLibro() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        LibroPrestado prestado = (LibroPrestado) interfaz.elegirLibroPrestado();
+        prestado.devolver();
+        System.out.println(prestado.getTitulo() + " devuelto!");
     }
 }

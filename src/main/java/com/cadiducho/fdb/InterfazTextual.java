@@ -59,17 +59,12 @@ public class InterfazTextual {
         Map<Integer, String> menuEP = new TreeMap<>();
         int numeroOpcion = 0;
         for (Libro l : fundamentos.libros) {
-            if (l instanceof LibroPrestado) {
-                LibroPrestado lp = (LibroPrestado) l;
-                if (lp.getFechaDevuelto() != null) { //ya ha sido devuelto
-                    menuEP.put(numeroOpcion, lp.getTitulo() + ", por " + lp.getAutor().getNombre());
-                }
-            } else {
+            if (!(l instanceof LibroPrestado)) {
                 menuEP.put(numeroOpcion, l.getTitulo() + ", por " + l.getAutor().getNombre());
             }
             numeroOpcion++;
         }
-        int salida = seleccionMenu(menuEP);
+        int salida = seleccionMenu(menuEP, numeroOpcion);
         return fundamentos.libros.get(salida);
     }
     
@@ -80,16 +75,16 @@ public class InterfazTextual {
             if (l instanceof LibroPrestado) {
                 LibroPrestado lp = (LibroPrestado) l;
                 if (lp.getFechaDevuelto() == null) {
-                    menuEP.put(numeroOpcion, lp.getTitulo() + ", por " + lp.getAutor().getNombre());
+                    menuEP.put(numeroOpcion, lp.getTitulo() + ", por " + lp.getAutor().getNombre() + ", prestado a " + lp.getUsuario().getNombre());
                 }
             }
             numeroOpcion++;
         }
-        int salida = seleccionMenu(menuEP);
+        int salida = seleccionMenu(menuEP, numeroOpcion);
         return fundamentos.libros.get(salida);
     }
     
-    private int seleccionMenu(Map<Integer, String> menu) { //Método para controlar la elección correcta de una opción en el menú que recibe como argumento   
+    private int seleccionMenu(Map<Integer, String> menu, int max) {
         boolean valido;
         int numero;
         String lectura;
@@ -101,9 +96,13 @@ public class InterfazTextual {
             }
             mostrar("\nElige una opción: ");
             lectura = in.nextLine();  //lectura de teclado
-            valido = comprobarOpcion(lectura, 0, menu.size() - 1); //método para comprobar la elección correcta
+            valido = comprobarOpcion(lectura, 0, max); //método para comprobar la elección correcta
         } while (!valido);
         return Integer.parseInt(lectura);
+    }
+    
+    private int seleccionMenu(Map<Integer, String> menu) {
+        return seleccionMenu(menu, menu.size() - 1);
     }
     
     private boolean comprobarOpcion(String lectura, int min, int max) {

@@ -98,6 +98,13 @@ public class MySQL {
         ")";
         
         try {
+            //Limpiar
+            openConnection().prepareStatement("DROP TABLE IF EXISTS LibrosPrestados;").executeUpdate();
+            openConnection().prepareStatement("DROP TABLE IF EXISTS Libros;").executeUpdate();
+            openConnection().prepareStatement("DROP TABLE IF EXISTS Temas;").executeUpdate();
+            openConnection().prepareStatement("DROP TABLE IF EXISTS Autores;").executeUpdate();
+            openConnection().prepareStatement("DROP TABLE IF EXISTS Usuarios;").executeUpdate();
+            
             PreparedStatement stmAutores = openConnection().prepareStatement(createAutores);
             stmAutores.executeUpdate();
             
@@ -138,8 +145,8 @@ public class MySQL {
                     + "	('eedd0b1d-4e4a-45dc-bc47-49a2a8481673', 'Harry Potter y la cámara secreta', '5a8256b5-5952-471e-9464-4c78b1c09acc', '60de96dd-ac7b-47f3-a99c-3e4481c33e22');");
             stmInsertar.addBatch("INSERT INTO `LibrosPrestados` (`dni`, `libro`, `fechaPrestado`, `fechaDevuelto`) VALUES"
                     + "	('32426456G', 'dc797a0d-b225-484e-b669-7a467e38efad', '2018-05-22 18:46:09', NULL),"
-                    + "	('88da8433-', 'c6492bbf-8ae6-4453-8e6c-6d0ef4edab5b', '2018-05-22 17:06:33', NULL),"
-                    + "	('88da8433-', 'eedd0b1d-4e4a-45dc-bc47-49a2a8481673', '2018-05-22 16:27:18', '2018-05-22 17:06:36');");
+                    + "	('88da8433P', 'c6492bbf-8ae6-4453-8e6c-6d0ef4edab5b', '2018-05-22 17:06:33', NULL),"
+                    + "	('88da8433P', 'eedd0b1d-4e4a-45dc-bc47-49a2a8481673', '2018-05-22 16:27:18', '2018-05-22 17:06:36');");
             stmInsertar.executeBatch();
         } catch (SQLException | ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
