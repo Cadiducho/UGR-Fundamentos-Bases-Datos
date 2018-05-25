@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 /**
- * Clase de Autor
+ * Clase que representa un Autor
  */
 public class Autor {
     
@@ -15,6 +15,7 @@ public class Autor {
     
     /**
      * Crear un autor a partir de su nombre
+     * La id es generada aleatoriamente
      * @param nombre nombre del autor
      */
     public Autor(String nombre) {
@@ -31,19 +32,25 @@ public class Autor {
         this.nombre = nombre;
     }
 
+    /**
+     * El nombre del autor
+     * @return el nombre
+     */
     public String getNombre() {
         return nombre;
     }
     
+    /**
+     * La ID del Autor
+     * @return su id
+     */
     public UUID getId() {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "Autor{" + "id=" + id + ", nombre=" + nombre + '}';
-    }
-
+    /**
+     * Insertar en la base de datos a este usuario
+     */
     public void register() {
         try {
             PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Autores` (`id`, `nombre`) VALUES (?, ?);");
@@ -53,5 +60,11 @@ public class Autor {
         } catch (SQLException | ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-    }   
+    }
+    
+    @Override
+    public String toString() {
+        return "Autor{" + "id=" + id + ", nombre=" + nombre + '}';
+    }
+
 }

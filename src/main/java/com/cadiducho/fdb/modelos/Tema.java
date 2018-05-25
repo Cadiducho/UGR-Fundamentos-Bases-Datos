@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 /**
- * Clase de Tema
+ * Clase que representa una temática
  */
 public class Tema {
     
@@ -43,7 +43,10 @@ public class Tema {
     public String toString() {
         return "Tema{" + "id=" + id + ", nombre=" + nombre + '}';
     }
-
+    
+    /**
+     * Insertar los datos asociados a una temática en la base de datos
+     */
     public void register() {
         try {
             PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Temas` (`id`, `nombre`) VALUES (?, ?);");

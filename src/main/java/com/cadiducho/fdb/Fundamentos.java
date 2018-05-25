@@ -13,21 +13,52 @@ import java.util.UUID;
 
 public class Fundamentos {
     
+    /**
+     * Clase para gestionar las conexiones
+     */
     public MySQL mysql = null;
-    private final Scanner in;
+    
+    /**
+     * Referencia a la conexión a MySQL
+     */
     private Connection conn;
     
+    /**
+     * Lista de los usuarios mantenidos en memoria
+     */
     public final ArrayList<Usuario> usuarios;
+    
+    /**
+     * Lista de los temas mantenidos en memoria
+     */
     public final ArrayList<Tema> temas;
+    
+    /**
+     * Lista de los autores en memoria
+     */
     public final ArrayList<Autor> autores;
+    
+    /**
+     * Lista de los libros en memoria
+     */
     public final ArrayList<Libro> libros;
     
+    /**
+     * Clase para facilitar el manejo de la interfaz textural
+     */
     private final InterfazTextual interfaz;
     
     private static Fundamentos instance;
+    
+    /**
+     * Singleton
+     * @return instancia de Fundamentos
+     */
     public static Fundamentos get() {
         return instance;
     }
+      
+    private final Scanner in;
     
     public Fundamentos() {
         in = new Scanner(System.in);
@@ -39,6 +70,11 @@ public class Fundamentos {
         instance = this;
     }
     
+    /**
+     * Ejecutar el programa
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public void run() throws SQLException, ClassNotFoundException {
         boolean running = true;
        
@@ -126,19 +162,37 @@ public class Fundamentos {
         System.out.println("0. Desconectate");
     }
     
+    /**
+     * Obtener una instancia de {@link Usuario} a partir de su id
+     * @param id su id
+     * @return el autor
+     */
     public Autor autorFromId(UUID id) {
         return autores.stream().filter(aut -> aut.getId().equals(id)).findAny().orElse(null);
     }
     
+    /**
+     * Obtener una intancia de {@link Tema} a partir de su id
+     * @param id su id
+     * @return el tema
+     */
     public Tema temaFromId(UUID id) {
         return temas.stream().filter(tema -> tema.getId().equals(id)).findAny().orElse(null);
     }
     
+    /**
+     * Obtener una intancia de {@link Usuario} a partir de su dni
+     * @param dni su dni
+     * @return el usuario
+     */
     public Usuario usuarioFromDni(String dni) {
         return usuarios.stream().filter(user -> user.getDni().equalsIgnoreCase(dni)).findAny().orElse(null);
     }
 
-    private void insertarUsuario() {
+    /**
+     * Crear un nuevo {@link Usuario}
+     */
+    public void insertarUsuario() {
         System.out.println("Inserta nombre: ");
         String nombre = in.nextLine();
         System.out.println("Inserta dni: ");
@@ -149,7 +203,10 @@ public class Fundamentos {
         usuarios.forEach(System.out::println);
     }
 
-    private void insertarTema() {
+    /**
+     * Crear un nuevo {@link Tema}
+     */
+    public void insertarTema() {
         System.out.println("Inserta tema: ");
         String nombre = in.nextLine();
         Tema tema = new Tema(nombre);
@@ -158,7 +215,10 @@ public class Fundamentos {
         temas.forEach(System.out::println);
     }
 
-    private void insertarAutor() {
+    /**
+     * Crear un nuevo {@link Autor}
+     */
+    public void insertarAutor() {
         System.out.println("Inserta autor: ");
         String nombre = in.nextLine();
         Autor autor = new Autor(nombre);
@@ -167,7 +227,10 @@ public class Fundamentos {
         autores.forEach(System.out::println);
     }
 
-    private void insertarLibro() {
+    /**
+     * Crear un nuevo {@link Libro}
+     */
+    public void insertarLibro() {
         System.out.println("Inserta titulo: ");
         String nombre = in.nextLine();
         System.out.println("Selecciona un tema: ");
@@ -180,7 +243,11 @@ public class Fundamentos {
         libros.forEach(System.out::println);
     }
 
-    private void prestarLibro() {
+    /**
+     * Prestar un {@link Libro}
+     * @see LibroPrestado
+     */
+    public void prestarLibro() {
         Libro libro = interfaz.elegirLibroNoPrestado();
         Usuario usuaro = interfaz.elegirUsuario();
         libros.remove(libro);
@@ -190,7 +257,11 @@ public class Fundamentos {
         System.out.println(prestado.getTitulo() + " prestado!");
     }
 
-    private void devolverLibro() {
+    /**
+     * Devolver un {@link LibroPrestado}
+     * @see Fundamentos#prestarLibro() 
+     */
+    public void devolverLibro() {
         LibroPrestado prestado = (LibroPrestado) interfaz.elegirLibroPrestado();
         prestado.devolver();
         System.out.println(prestado.getTitulo() + " devuelto!");

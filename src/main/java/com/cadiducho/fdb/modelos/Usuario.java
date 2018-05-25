@@ -5,11 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Clase de Usuario
+ * Clase que representa un Usuario
  */
 public class Usuario {
     
+    /**
+     * El DNI del Usuario. Debe tener un máximo de 9 caractéres
+     */
     private final String dni;
+    
+    /**
+     * El nombre del usuario
+     */
     private final String nombre;
     
     /**
@@ -29,12 +36,10 @@ public class Usuario {
     public String getNombre() {
         return nombre;
     }
-
-    @Override
-    public String toString() {
-        return "Usuario{" + "dni=" + dni + ", nombre=" + nombre + '}';
-    }
-
+    
+    /**
+     * Insertar en la base de datos a este usuario
+     */
     public void register() {
         try {
             PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `Usuarios` (`dni`, `nombre`) VALUES (?, ?);");
@@ -46,4 +51,8 @@ public class Usuario {
         }
     }
     
+    @Override
+    public String toString() {
+        return "Usuario{" + "dni=" + dni + ", nombre=" + nombre + '}';
+    }
 }

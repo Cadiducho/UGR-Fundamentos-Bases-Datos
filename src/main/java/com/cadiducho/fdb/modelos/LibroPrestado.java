@@ -8,19 +8,48 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- *
- * @author cadid
+ * Clase que representa un LibroPrestado
  */
 public class LibroPrestado extends Libro {
     
+    /**
+     * El {@link Usuario} al que fue prestado el libro
+     */
     private final Usuario usuario;
+    
+    /**
+     * La fecha y hora en la que el libro fue prestado
+     */
     private final Date fechaPrestado;
+    
+    /**
+     * La fecha y hora en la que el libro fue devuelto
+     */
     private Date fechaDevuelto;
     
+    /**
+     * Crear un libro prestado sin devolver
+     * @param id la id del libro
+     * @param usuario el usuario al que es prestado el libro
+     * @param autor el autor del libro
+     * @param tema la temática del libro
+     * @param titulo el título de libro
+     * @param fechaPrestado la fecha en la que fue prestado el libro
+     */
     public LibroPrestado(UUID id, Usuario usuario, Autor autor, Tema tema, String titulo, Date fechaPrestado) {
         this(id, usuario, autor, tema, titulo, new Date(), null);
     }
     
+    /**
+     * Crear un libro prestado ya devuelto
+     * @param id la id del libro
+     * @param usuario el usuario al que es prestado el libro
+     * @param autor el autor del libro
+     * @param tema la temática del libro
+     * @param titulo el título de libro
+     * @param fechaPrestado la fecha en la que fue prestado el libro
+     * @param fechaDevuelto la fecha en la que el libro fue devuelto
+     */
     public LibroPrestado(UUID id, Usuario usuario, Autor autor, Tema tema, String titulo, Date fechaPrestado, Date fechaDevuelto) {
         super(id, autor, tema, titulo);
         this.usuario = usuario;
@@ -45,6 +74,9 @@ public class LibroPrestado extends Libro {
         return "LibroPrestado{" + "libro=" + super.toString() + ", usuario=" + usuario + ", fechaPrestado=" + fechaPrestado + ", fechaDevuelto=" + fechaDevuelto + '}';
     }
     
+    /**
+     * Insertar en la base de datos los parámetros asociados al préstamo del libro
+     */
     public void procesarPrestamo() {
         try {
             PreparedStatement ps = Fundamentos.get().mysql.openConnection().prepareStatement("INSERT INTO `LibrosPrestados` (`dni`, `libro`, `fechaPrestado`, `fechaDevuelto`) VALUES (?, ?, ?, ?);");
@@ -58,6 +90,9 @@ public class LibroPrestado extends Libro {
         }
     }
     
+    /**
+     * Actualizar los datos del libro prestado, marcándolo como devuelto
+     */
     public void devolver() {
         fechaDevuelto = new Date();
         try {
